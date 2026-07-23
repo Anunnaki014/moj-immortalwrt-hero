@@ -809,3 +809,17 @@ define Device/routerich_ax3000
   DEVICE_PACKAGES := $(MT7981_USB_PKGS)
 endef
 TARGET_DEVICES += routerich_ax3000
+
+define Device/keenetic_kn-1012
+  DEVICE_VENDOR := Keenetic
+  DEVICE_MODEL := Hero/Giga (KN-1012)
+  DEVICE_VARIANT := NAND
+  DEVICE_DTS := mt7981-keenetic-kn-1012
+  DEVICE_COMPATIBLE := keenetic,kn-1012 mediatek,mt7981
+  IMAGE_SIZE := 114688k
+  SUPPORTED_DEVICES := keenetic,kn-1012
+  DEVICE_PACKAGES := kmod-usb3 kmod-mt7981-firmware wpad-basic-wolfssl
+  KERNEL := kernel-initramfs
+  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+endef
+TARGET_DEVICES += keenetic_kn-1012
