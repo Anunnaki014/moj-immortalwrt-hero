@@ -1,0 +1,50 @@
+name: Build Keenetic KN-1012 MT7981 Firmware
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Initialization environment
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential clang flex bison gawk gcc-multilib g++-multilib gettext git libncurses5-dev libssl-dev libxml-parser-perl lzma swig unzip zlib1g-dev file p7zip-full unzip ccache libelf-dev
+
+      - name: Faza 1 - Ciscenje fabrickog koda i sablona
+        run: |
+          rm -rf package/emortal/default-settings
+          sed -i 's/CONFIG_PACKAGE_default-settings=y/# CONFIG_PACKAGE_default-settings is not set/' defconfig/*
+          sed -i 's/CONFIG_PACKAGE_luci-app-turboacc=y/# CONFIG_PACKAGE_luci-app-turboacc is not set/' defconfig/*
+
+      - name: Preuzimanje i priprema feed-ova
+        run: |
+          ./scripts/feeds update -a
+          ./scripts/feeds install -a
+
+      - name: Faza 2 - Ciscenje preuzetih feed-ova
+        run: |
+          rm -rf feeds/luci/applications/luci-app-turboacc
+
+      - name: SSH connection to Actions
+        uses: P3TERX/ssh2actions@main
+        if: false
+
+      - name: Sredjivanje generisanog .config fajla
+        run: |
+          [ -f .config ] && sed -i 's/CONFIG_PACKAGE_default-settings=y/# CONFIG_PACKAGE_default-settings is not set/' .config || true
+          [ -f .config ] && sed -i 's/CONFIG_PACKAGE_luci-app-turboacc=y/# CONFIG_PACKAGE_luci-app-turboacc is not set/' .config || true
+
+      - name: Compile the firmware
+        run: |
+          make defconfig
+          make -j$(nproc) || make -j1 V=s
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ImmortalWrt_Firmware
+          path: bin/targets/mediatek/mt7981/*
