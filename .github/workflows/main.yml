@@ -1,4 +1,5 @@
 name: Build Keenetic KN-1012 MT7981 Firmware
+
 on:
   workflow_dispatch:
 
@@ -17,8 +18,8 @@ jobs:
       - name: Faza 1 - Ciscenje fabrickog koda i sablona
         run: |
           rm -rf package/emortal/default-settings
-          sed -i 's/CONFIG_PACKAGE_default-settings=y/# CONFIG_PACKAGE_default-settings is not set/' defconfig/*
-          sed -i 's/CONFIG_PACKAGE_luci-app-turboacc=y/# CONFIG_PACKAGE_luci-app-turboacc is not set/' defconfig/*
+          [ -f .config ] && sed -i 's/CONFIG_PACKAGE_default-settings=y/# CONFIG_PACKAGE_default-settings is not set/' .config || true
+          [ -f .config ] && sed -i 's/CONFIG_PACKAGE_luci-app-turboacc=y/# CONFIG_PACKAGE_luci-app-turboacc is not set/' .config || true
 
       - name: Preuzimanje i priprema feed-ova
         run: |
@@ -37,6 +38,11 @@ jobs:
         run: |
           [ -f .config ] && sed -i 's/CONFIG_PACKAGE_default-settings=y/# CONFIG_PACKAGE_default-settings is not set/' .config || true
           [ -f .config ] && sed -i 's/CONFIG_PACKAGE_luci-app-turboacc=y/# CONFIG_PACKAGE_luci-app-turboacc is not set/' .config || true
+
+      - name: Fiksiranje Keenetic DTS veze sa kernelom
+        run: |
+          mkdir -p target/linux/mediatek/image/
+          ln -sf ../files-5.4/arch/arm64/boot/dts/mediatek/mt7981-keenetic-kn-1012.dts target/linux/mediatek/image/mt7981-keenetic-kn-1012.dts || true
 
       - name: Compile the firmware
         run: |
