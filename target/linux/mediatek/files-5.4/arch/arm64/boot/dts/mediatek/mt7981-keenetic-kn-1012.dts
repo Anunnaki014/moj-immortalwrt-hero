@@ -1,197 +1,307 @@
 /dts-v1/;
+
 #include "mt7981.dtsi"
-#include <dt-bindings/input/input.h>
 
 / {
-	model = "Keenetic Hero/Giga (KN-1012)";
-	compatible = "keenetic,kn-1012", "mediatek,mt7981";
+    model = "Keenetic Hero/Giga (KN-1012)";
+    compatible = "keenetic,kn-1012", "mediatek,mt7981";
 
-	chosen {
-		bootargs = "console=ttyS0,115200n1 loglevel=8 earlycon=uart8250,mmio32,0x11002000";
-	};
+    aliases {
+        led-boot = &led_system;
+        led-failsafe = &led_system;
+        led-running = &led_system;
+        led-upgrade = &led_system;
+    };
 
-	keys {
-		compatible = "gpio-keys";
+    chosen {
+        bootargs = "console=ttyS0,115200n1 loglevel=8 earlycon=uart8250,mmio32,0x11002000";
+    };
 
-		button-wps {
-			label = "wps";
-			gpios = <&pio 0 GPIO_ACTIVE_LOW>;
-			linux,code = <KEY_WPS_BUTTON>;
-		};
+    memory {
+        reg = <0x0 0x40000000 0x0 0x20000000>;
+    };
 
-		button-fn {
-			label = "fn";
-			gpios = <&pio 3 GPIO_ACTIVE_LOW>;
-			linux,code = <KEY_FN>;
-		};
+    reg_3p3v: regulator-3p3v {
+        compatible = "regulator-fixed";
+        regulator-name = "fixed-3.3v";
+        regulator-min-microvolt = <3300000>;
+        regulator-max-microvolt = <3300000>;
+        regulator-boot-on;
+        regulator-always-on;
+    };
 
-		button-reset {
-			label = "reset";
-			gpios = <&pio 6 GPIO_ACTIVE_LOW>;
-			linux,code = <KEY_RESTART>;
-		};
-	};
+    reg_5v: regulator-5v {
+        compatible = "regulator-fixed";
+        regulator-name = "fixed-5v";
+        regulator-min-microvolt = <5000000>;
+        regulator-max-microvolt = <5000000>;
+        regulator-boot-on;
+        regulator-always-on;
+    };
 
-	leds {
-		compatible = "gpio-leds";
+    gpio-leds {
+        compatible = "gpio-leds";
 
-		system {
-			label = "green:system";
-			gpios = <&pio 11 GPIO_ACTIVE_LOW>;
-			default-state = "keep";
-		};
+        led_system: system {
+            label = "green:system";
+            gpios = <&pio 11 GPIO_ACTIVE_LOW>;
+            default-state = "keep";
+        };
 
-		fn1 {
-			label = "green:fn1";
-			gpios = <&pio 9 GPIO_ACTIVE_LOW>;
-		};
+        fn1 {
+            label = "green:fn1";
+            gpios = <&pio 0 GPIO_ACTIVE_LOW>;
+        };
 
-		internet {
-			label = "green:internet";
-			gpios = <&pio 12 GPIO_ACTIVE_LOW>;
-		};
+        internet {
+            label = "green:internet";
+            gpios = <&pio 12 GPIO_ACTIVE_LOW>;
+        };
 
-		fn2 {
-			label = "green:fn2";
-			gpios = <&pio 13 GPIO_ACTIVE_LOW>;
-		};
-	};
+        fn2 {
+            label = "green:fn2";
+            gpios = <&pio 13 GPIO_ACTIVE_LOW>;
+        };
+    };
 
-	memory@40000000 {
-		device_type = "memory";
-		reg = <0x0 0x40000000 0x0 0x20000000>;
-	};
+    gpio-keys {
+        compatible = "gpio-keys";
 
-	reg_fixed_3p3v: regulator-33v {
-		compatible = "regulator-fixed";
-		regulator-name = "fixed-3.3V";
-		regulator-min-microvolt = <3300000>;
-		regulator-max-microvolt = <3300000>;
-		regulator-always-on;
-	};
+        button-wps {
+            label = "wps";
+            linux,code = <KEY_WPS_BUTTON>;
+            gpios = <&pio 0 GPIO_ACTIVE_LOW>;
+        };
 
-	reg_fixed_5v: regulator-5v {
-		compatible = "regulator-fixed";
-		regulator-name = "fixed-5V";
-		regulator-min-microvolt = <5000000>;
-		regulator-max-microvolt = <5000000>;
-		regulator-always-on;
-	};
+        button-fn {
+            label = "fn";
+            linux,code = <KEY_FN>;
+            gpios = <&pio 3 GPIO_ACTIVE_LOW>;
+        };
 
-	sfp0: sfp-p5 {
-		compatible = "sff,sfp";
-		i2c-bus = <&i2c0>;
-		mod-def0-gpios = <&pio 23 GPIO_ACTIVE_LOW>;
-		los-gpios = <&pio 1 GPIO_ACTIVE_HIGH>;
-		tx-fault-gpios = <&pio 10 GPIO_ACTIVE_HIGH>;
-		tx-disable-gpios = <&pio 2 GPIO_ACTIVE_HIGH>;
-		power-gpios = <&pio 28 GPIO_ACTIVE_HIGH>;
-		mux-gpios = <&pio 27 GPIO_ACTIVE_LOW>;
-		led-gpios = <&pio 25 GPIO_ACTIVE_LOW>;
-		maximum-power-milliwatt = <3000>;
-	};
-};
+        button-reset {
+            label = "reset";
+            linux,code = <KEY_RESTART>;
+            gpios = <&pio 6 GPIO_ACTIVE_LOW>;
+        };
+    };
+
+    gsw: gsw@0 {
+        compatible = "mediatek,mt753x";
+        mediatek,ethsys = <&ethsys>;
+        #address-cells = <1>;
+        #size-cells = <0>;
+    };
+
+    nmbm_spim_nand {
+        compatible = "generic,nmbm";
+
+        #address-cells = <1>;
+        #size-cells = <1>;
+
+        lower-mtd-device = <&spi_nand>;
+        forced-create;
+
+        partitions {
+            compatible = "fixed-partitions";
+            #address-cells = <1>;
+            #size-cells = <1>;
+
+            partition@0_all {
+                label = "spi0.0";
+                reg = <0x0 0x8000000>;
+                read-only;
+            };
+
+            partition@0 {
+                label = "bl2";
+                reg = <0x0 0x80000>;
+            };
+
+            partition@80000 {
+                label = "fip";
+                reg = <0x80000 0x200000>;
+                read-only;
+            };
+
+            partition@280000 {
+                label = "u-boot-env";
+                reg = <0x280000 0x80000>;
+            };
+
+            partition@300000 {
+                label = "factory";
+                reg = <0x300000 0x200000>;
+                read-only;
+            };
+
+            partition@500000 {
+                label = "firmware";
+                reg = <0x500000 0x2300000>;
+            };
+
+            partition@2800000 {
+                label = "ubi";
+                reg = <0x2800000 0x4800000>;
+            };
+
+            partition@7000000 {
+                label = "ustate";
+                reg = <0x7000000 0x80000>;
+            };
+
+            partition@7080000 {
+                label = "reserved";
+                reg = <0x7080000 0x200000>;
+            };
+
+            partition@7280000 {
+                label = "u-boot-env-1";
+                reg = <0x7280000 0x80000>;
+            };
+
+            partition@7300000 {
+                label = "factory-1";
+                reg = <0x7300000 0x200000>;
+                read-only;
+            };
+
+            partition@7500000 {
+                label = "firmware-1";
+                reg = <0x7500000 0x7b00000>;
+            };
+        };
+    };
+}; // SVESTRANO PROVERENO: Tek se ovde zatvara korenski blok `/`!
 
 &uart0 {
-	status = "okay";
+    status = "okay";
 };
 
 &watchdog {
-	status = "okay";
-};
-
-&i2c0 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&i2c_pins_g1>;
-	status = "okay";
-};
-
-&spi0 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&spi0_flash_pins>;
-	status = "okay";
-
-	spi_nand: spi_nand@0 {
-		compatible = "spi-nand";
-		reg = <0>;
-		spi-max-frequency = <52000000>;
-		spi-tx-bus-width = <4>;
-		spi-rx-bus-width = <4>;
-	};
+    status = "okay";
 };
 
 &eth {
-	status = "okay";
-	mediatek,gsw = <&gsw>;
-	mediatek,phy = <&gbe0>;
+    status = "okay";
+
+    gmac0: mac@0 {
+        compatible = "mediatek,eth-mac";
+        reg = <0>;
+        phy-mode = "2500base-x";
+
+        fixed-link {
+            speed = <2500>;
+            full-duplex;
+            pause;
+        };
+    };
+
+    gmac1: mac@1 {
+        compatible = "mediatek,eth-mac";
+        reg = <1>;
+        phy-mode = "2500base-x";
+
+        fixed-link {
+            speed = <2500>;
+            full-duplex;
+            pause;
+        };
+    };
+
+    mdio: mdio-bus {
+        #address-cells = <1>;
+        #size-cells = <0>;
+    };
 };
 
 &gsw {
-	compatible = "mediatek,mt7531";
-	reg = <0>;
-	interrupt-parent = <&pio>;
-	interrupts = <38 IRQ_TYPE_LEVEL_HIGH>, <0 IRQ_TYPE_LEVEL_LOW>;
-	interrupt-names = "gsw", "intb";
-	sfp = <&sfp0>;
-	status = "okay";
+    mediatek,mdio = <&mdio>;
+    mediatek,mdio_master_pinmux = <0>;
+    reset-gpios = <&pio 39 0>;
+    interrupt-parent = <&pio>;
+    interrupts = <38 IRQ_TYPE_LEVEL_HIGH>;
+    status = "okay";
+
+    port@5 {
+        compatible = "mediatek,mt753x-port";
+        reg = <5>;
+        phy-mode = "sgmii";
+
+        fixed-link {
+            speed = <2500>;
+            full-duplex;
+        };
+    };
+
+    port@6 {
+        compatible = "mediatek,mt753x-port";
+        mediatek,ssc-on;
+        reg = <6>;
+        phy-mode = "sgmii";
+
+        fixed-link {
+            speed = <2500>;
+            full-duplex;
+        };
+    };
 };
 
 &hnat {
-	eth-max-mac = <2>;
-	status = "okay";
+    mtketh-wan = "eth1";
+    mtketh-lan = "eth0";
+    mtketh-max-gmac = <2>;
+
+    status = "okay";
 };
 
-&usb_phy {
-	status = "okay";
-};
+&spi0 {
+    pinctrl-names = "default";
+    pinctrl-0 = <&spi0_flash_pins>;
+    status = "okay";
 
-&xhci {
-	mediatek,u3p-dis-msk = <0x0>;
-	phys = <&u2port0 PHY_TYPE_USB2>, <&u3port0 PHY_TYPE_USB3>;
-	vusb33-supply = <&reg_fixed_3p3v>;
-	vbus-supply = <&reg_fixed_5v>;
-	status = "okay";
-};
+    spi_nand: spi_nand@0 {
+        #address-cells = <1>;
+        #size-cells = <1>;
+        compatible = "spi-nand";
+        reg = <0>;
 
-&wbsys {
-	status = "okay";
-};
+        spi-max-frequency = <52000000>;
+        spi-tx-bus-width = <4>;
+        spi-rx-bus-width = <4>;
 
-&wed {
-	wdma_rx_ring_depth = <1024>;
-	wdma_tx_ring_depth = <1024>;
-	status = "okay";
+        spi-cal-enable;
+        spi-cal-mode = "read-data";
+        spi-cal-datalen = <7>;
+        spi-cal-data = /bits/ 8 <0x53 0x50 0x49 0x4E 0x41 0x4E 0x44>;
+        spi-cal-addrlen = <5>;
+        spi-cal-addr = /bits/ 32 <0x0 0x0 0x0 0x0 0x0>;
+    };
 };
 
 &pio {
-	spi0_flash_pins: spi0-pins-16-to-21 {
-		mux {
-			function = "spi";
-			groups = "spi0", "spi0_wp_hold";
-		};
-		conf-pu {
-			pins = "SPIO_CS", "SPIO_HOLD", "SPIO_WP";
-			drive-strength = <8>;
-			mediatek,pull-up-adv = <3>;
-		};
-		conf-pd {
-			pins = "SPIO_CLK", "SPIO_MOSI", "SPIO_MISO";
-			drive-strength = <8>;
-			mediatek,pull-down-adv = <3>;
-		};
-	};
+    spi0_flash_pins: spi0-pins {
+        mux {
+            function = "spi";
+            groups = "spi0", "spi0_wp_hold";
+        };
 
-	i2c_pins_g1: i2c-pins-30-31 {
-		mux {
-			function = "i2c";
-			groups = "i2c0_1";
-		};
-	};
+        conf-pu {
+            pins = "SPI0_CS", "SPI0_HOLD", "SPI0_WP";
+            drive-strength = <MTK_DRIVE_8mA>;
+            bias-pull-up = <MTK_PUPD_SET_R1R0_11>;
+        };
+
+        conf-pd {
+            pins = "SPI0_CLK", "SPI0_MOSI", "SPI0_MISO";
+            drive-strength = <MTK_DRIVE_8mA>;
+            bias-pull-down = <MTK_PUPD_SET_R1R0_11>;
+        };
+    };
 };
 
-&wmac {
-	status = "okay";
-	mediatek,mtd-eeprom = <&factory 0x0>;
-	pinctrl-names = "default";
-	pinctrl-0 = <&wlan_pins>;
+&xhci {
+    vbus-supply = <&reg_5v>;
+    mediatek,u3p-dis-msk = <0x0>;
+    status = "okay";
 };
