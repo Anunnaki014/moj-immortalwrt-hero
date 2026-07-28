@@ -18,8 +18,8 @@ jobs:
       - name: Faza 1 - Ciscenje fabrickog koda i sablona
         run: |
           rm -rf package/emortal/default-settings
-          [ -f .config ] && sed -i 's/CONFIG_PACKAGE_default-settings=y/# CONFIG_PACKAGE_default-settings is not set/' .config || true
-          [ -f .config ] && sed -i 's/CONFIG_PACKAGE_luci-app-turboacc=y/# CONFIG_PACKAGE_luci-app-turboacc is not set/' .config || true
+          # [ -f .config ] && sed -i 's/CONFIG_PACKAGE_default-settings=y/# CONFIG_PACKAGE_default-settings is not set/' .config || true
+          # [ -f .config ] && sed -i 's/CONFIG_PACKAGE_luci-app-turboacc=y/# CONFIG_PACKAGE_luci-app-turboacc is not set/' .config || true
 
       - name: Preuzimanje i priprema feed-ova
         run: |
@@ -36,8 +36,8 @@ jobs:
 
       - name: Sredjivanje generisanog .config fajla
         run: |
-          [ -f .config ] && sed -i 's/CONFIG_PACKAGE_default-settings=y/# CONFIG_PACKAGE_default-settings is not set/' .config || true
-          [ -f .config ] && sed -i 's/CONFIG_PACKAGE_luci-app-turboacc=y/# CONFIG_PACKAGE_luci-app-turboacc is not set/' .config || true
+          # [ -f .config ] && sed -i 's/CONFIG_PACKAGE_default-settings=y/# CONFIG_PACKAGE_default-settings is not set/' .config || true
+          # [ -f .config ] && sed -i 's/CONFIG_PACKAGE_luci-app-turboacc=y/# CONFIG_PACKAGE_luci-app-turboacc is not set/' .config || true
 
       - name: Fiksiranje Keenetic DTS veze sa kernelom
         run: |
