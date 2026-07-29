@@ -820,7 +820,6 @@ define Device/keenetic_kn-1012
   IMAGE_SIZE := 114688k
   SUPPORTED_DEVICES := keenetic,kn-1012
   DEVICE_PACKAGES := kmod-usb3 kmod-mt7981-firmware wpad-basic-wolfssl
-  KERNEL := kernel-initramfs
   IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
 endef
 TARGET_DEVICES += keenetic_kn-1012
