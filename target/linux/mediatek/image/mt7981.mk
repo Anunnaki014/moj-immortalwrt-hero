@@ -821,5 +821,6 @@ define Device/keenetic_kn-1012
   SUPPORTED_DEVICES := keenetic,kn-1012
   DEVICE_PACKAGES := kmod-usb3 kmod-mt7981-firmware wpad-basic-wolfssl
   IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+  KERNEL_INITRAMFS := kernel-bin | lzma | fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb with-initrd | pad-to 64k
 endef
 TARGET_DEVICES += keenetic_kn-1012
