@@ -2,6 +2,7 @@ ARCH:=aarch64
 SUBTARGET:=mt7981
 BOARDNAME:=MT7981
 CPU_TYPE:=cortex-a53
+FEATURES+=initramfs
 
 KERNELNAME:=Image dtbs
 
