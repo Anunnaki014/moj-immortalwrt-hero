@@ -32,9 +32,8 @@ jobs:
         uses: P3TERX/ssh2actions@main
         if: false
 
-      - name: Sredjivanje generisanog .config fajla
-        run: |
-          echo "Nema rucnih izmena ovde"
+      - name: Sredjivanje generisanog config fajla
+        run: echo "Nema rucnih izmena"
 
       - name: Fiksiranje Keenetic DTS veze sa kernelom
         run: |
@@ -44,26 +43,15 @@ jobs:
       - name: Compile the firmware
         run: |
           [ -f .config ] || cd openwrt || cd immortalwrt || true
-          
-          # 1. Prvo generisemo osnovni config da napravi sve fajlove i rootfs direktorijum
           make defconfig
-
-          # 2. Pustamo build-sistem da napravi rootfs strukturu pre nego što sklopi kernel
           make target/linux/compile
-
-          # 3. Kljucni korak: Kopiramo kompletan LuCI i fajl sistem u privremeni direktorijum
           mkdir -p /tmp/target_rootfs
           cp -r build_dir/target-aarch64_cortex-a53_musl/root-mediatek/* /tmp/target_rootfs/ || true
-
-          # 4. Primoravamo sam Linux kernel preko .config-a da ugradi taj direktorijum direktno u sebe
           sed -i '/CONFIG_TARGET_ROOTFS_INITRAMFS/d' .config || true
           sed -i '/CONFIG_INITRAMFS_SOURCE/d' .config || true
-          
           echo "CONFIG_TARGET_ROOTFS_INITRAMFS=y" >> .config
-          echo "CONFIG_INITRAMFS_SOURCE=\"/tmp/target_rootfs\"" >> .config
+          echo 'CONFIG_INITRAMFS_SOURCE="/tmp/target_rootfs"' >> .config
           echo "CONFIG_INITRAMFS_COMPRESSION_GZIP=y" >> .config
-
-          # 5. Pokrecemo finalno kuvanje koda sa ugradjenim fajl sistemom
           make -j$(nproc) || make -j1 V=s
 
       - name: Upload artifact
