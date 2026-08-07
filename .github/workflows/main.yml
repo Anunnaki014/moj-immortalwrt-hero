@@ -18,8 +18,6 @@ jobs:
       - name: Faza 1 - Ciscenje fabrickog koda i sablona
         run: |
           rm -rf package/emortal/default-settings
-          # [ -f .config ] && sed -i 's/CONFIG_PACKAGE_default-settings=y/# CONFIG_PACKAGE_default-settings is not set/' .config || true
-          # [ -f .config ] && sed -i 's/CONFIG_PACKAGE_luci-app-turboacc=y/# CONFIG_PACKAGE_luci-app-turboacc is not set/' .config || true
 
       - name: Preuzimanje i priprema feed-ova
         run: |
@@ -36,8 +34,7 @@ jobs:
 
       - name: Sredjivanje generisanog .config fajla
         run: |
-          # [ -f .config ] && sed -i 's/CONFIG_PACKAGE_default-settings=y/# CONFIG_PACKAGE_default-settings is not set/' .config || true
-          # [ -f .config ] && sed -i 's/CONFIG_PACKAGE_luci-app-turboacc=y/# CONFIG_PACKAGE_luci-app-turboacc is not set/' .config || true
+          echo "Nema rucnih izmena ovde"
 
       - name: Fiksiranje Keenetic DTS veze sa kernelom
         run: |
@@ -48,18 +45,25 @@ jobs:
         run: |
           [ -f .config ] || cd openwrt || cd immortalwrt || true
           
-          # 1. Pravimo pocetni config
+          # 1. Prvo generisemo osnovni config da napravi sve fajlove i rootfs direktorijum
           make defconfig
 
-          # 2. Menjamo mrežna pravila pakovanja za MediaTek (Zamenjujemo odvojeno u integrisano)
-          find target/linux/mediatek/image/ -type f -name "*.mk" -exec sed -i 's/append-rootfs/append-kernel/g' {} + || true
+          # 2. Pustamo build-sistem da napravi rootfs strukturu pre nego što sklopi kernel
+          make target/linux/compile
 
-          # 3. Sređujemo .config fajl i upisujemo integraciju
+          # 3. Kljucni korak: Kopiramo kompletan LuCI i fajl sistem u privremeni direktorijum
+          mkdir -p /tmp/target_rootfs
+          cp -r build_dir/target-aarch64_cortex-a53_musl/root-mediatek/* /tmp/target_rootfs/ || true
+
+          # 4. Primoravamo sam Linux kernel preko .config-a da ugradi taj direktorijum direktno u sebe
           sed -i '/CONFIG_TARGET_ROOTFS_INITRAMFS/d' .config || true
+          sed -i '/CONFIG_INITRAMFS_SOURCE/d' .config || true
+          
           echo "CONFIG_TARGET_ROOTFS_INITRAMFS=y" >> .config
-          echo "CONFIG_TARGET_INITRAMFS_COMPRESSION_GZIP=y" >> .config
+          echo "CONFIG_INITRAMFS_SOURCE=\"/tmp/target_rootfs\"" >> .config
+          echo "CONFIG_INITRAMFS_COMPRESSION_GZIP=y" >> .config
 
-          # 4. Pokrećemo kuvanje
+          # 5. Pokrecemo finalno kuvanje koda sa ugradjenim fajl sistemom
           make -j$(nproc) || make -j1 V=s
 
       - name: Upload artifact
