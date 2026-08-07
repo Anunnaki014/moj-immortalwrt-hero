@@ -47,7 +47,6 @@ jobs:
       - name: Compile the firmware
         run: |
           make defconfig
-          echo "CONFIG_TARGET_ROOTFS_INITRAMFS=y" >> .config
           make -j$(nproc) || make -j1 V=s
 
       - name: Upload artifact
