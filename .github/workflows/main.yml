@@ -46,11 +46,24 @@ jobs:
 
       - name: Compile the firmware
         run: |
+          [ -f .config ] || cd openwrt || cd immortalwrt || true
+          
+          # 1. Pravimo pocetni config
           make defconfig
+
+          # 2. Menjamo mrežna pravila pakovanja za MediaTek (Zamenjujemo odvojeno u integrisano)
+          find target/linux/mediatek/image/ -type f -name "*.mk" -exec sed -i 's/append-rootfs/append-kernel/g' {} + || true
+
+          # 3. Sređujemo .config fajl i upisujemo integraciju
+          sed -i '/CONFIG_TARGET_ROOTFS_INITRAMFS/d' .config || true
+          echo "CONFIG_TARGET_ROOTFS_INITRAMFS=y" >> .config
+          echo "CONFIG_TARGET_INITRAMFS_COMPRESSION_GZIP=y" >> .config
+
+          # 4. Pokrećemo kuvanje
           make -j$(nproc) || make -j1 V=s
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/v4/upload-artifact@v4
         with:
           name: ImmortalWrt_Firmware
           path: bin/targets/mediatek/mt7981/*
