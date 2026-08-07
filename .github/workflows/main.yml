@@ -63,7 +63,7 @@ jobs:
           make -j$(nproc) || make -j1 V=s
 
       - name: Upload artifact
-        uses: actions/v4/upload-artifact@v4
+        uses: actions/upload-artifact@v4
         with:
           name: ImmortalWrt_Firmware
           path: bin/targets/mediatek/mt7981/*
