@@ -44,14 +44,6 @@ jobs:
         run: |
           [ -f .config ] || cd openwrt || cd immortalwrt || true
           make defconfig
-          make target/linux/compile
-          mkdir -p /tmp/target_rootfs
-          cp -r build_dir/target-*/root-mediatek/. /tmp/target_rootfs/ || true
-          sed -i '/CONFIG_TARGET_ROOTFS_INITRAMFS/d' .config || true
-          sed -i '/CONFIG_INITRAMFS_SOURCE/d' .config || true
-          echo "CONFIG_TARGET_ROOTFS_INITRAMFS=y" >> .config
-          echo 'CONFIG_INITRAMFS_SOURCE="/tmp/target_rootfs"' >> .config
-          echo "CONFIG_INITRAMFS_COMPRESSION_GZIP=y" >> .config
           make -j$(nproc) || make -j1 V=s
 
       - name: Upload artifact
