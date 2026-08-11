@@ -42,12 +42,20 @@ jobs:
 
       - name: Compile the firmware
         run: |
-          [ -f .config ] || cd openwrt || cd immortalwrt || true
+          if [ -d openwrt ]; then cd openwrt; elif [ -d immortalwrt ]; then cd immortalwrt; fi
           make defconfig
+          find target/linux/mediatek/image/ -type f -name "*.mk" -exec sed -i 's/append-rootfs/append-kernel/g' {} + || true
+          sed -i 's/CONFIG_TARGET_ROOTFS_INITRAMFS_SEPARATE=y/CONFIG_TARGET_ROOTFS_INITRAMFS_SEPARATE=n/' .config || true
+          sed -i '/CONFIG_TARGET_ROOTFS_INITRAMFS/d' .config || true
+          echo "CONFIG_TARGET_ROOTFS_INITRAMFS=y" >> .config
+          echo "CONFIG_TARGET_INITRAMFS_COMPRESSION_GZIP=y" >> .config
           make -j$(nproc) || make -j1 V=s
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ImmortalWrt_Firmware
-          path: bin/targets/mediatek/mt7981/*
+          path: |
+            bin/targets/mediatek/mt7981/*
+            openwrt/bin/targets/mediatek/mt7981/*
+            immortalwrt/bin/targets/mediatek/mt7981/*
