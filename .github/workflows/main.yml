@@ -59,3 +59,5 @@ jobs:
             bin/targets/mediatek/mt7981/*
             openwrt/bin/targets/mediatek/mt7981/*
             immortalwrt/bin/targets/mediatek/mt7981/*
+          include-hidden-files: true
+
