@@ -810,6 +810,7 @@ define Device/routerich_ax3000
 endef
 TARGET_DEVICES += routerich_ax3000
 
+
 define Device/keenetic_kn-1012
   DEVICE_VENDOR := Keenetic
   DEVICE_MODEL := Hero/Giga (KN-1012)
