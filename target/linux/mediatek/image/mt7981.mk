@@ -815,15 +815,15 @@ define Device/keenetic_kn-1012
   DEVICE_VENDOR := Keenetic
   DEVICE_MODEL := Hero/Giga (KN-1012)
   DEVICE_VARIANT := NAND
-  DEVICE_NAME := keenetic,kn-1012
   DEVICE_DTS := mt7981-keenetic-kn-1012
   DEVICE_DTS_DIR := $(DTS_DIR)/mediatek
-  DEVICE_COMPATIBLE := keenetic,kn-1012, mediatek,mt7981
+  DEVICE_COMPATIBLE := keenetic,kn-1012 mediatek,mt7981
+  SUPPORTED_DEVICES := keenetic,kn-1012 keenetic_kn-1012
   IMAGE_SIZE := 114688k
-  SUPPORTED_DEVICES := keenetic,kn-1012
   DEVICE_PACKAGES := kmod-usb3 kmod-mt7981-firmware wpad-basic-wolfssl luci uhttpd uhttpd-mod-ubus
-  IMAGE/sysupgrade.bin := sysupgrade-tar
-  KERNEL_INITRAMFS := kernel-bin | lzma | fit lzma $$(KDIR)/image-$$(firstword $$(DEVICE_DTS)).dtb with-initrd | pad-to 64k
+  IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
+  KERNEL_INITRAMFS := kernel-bin | lzma | fit lzma $$(KDIR)/image-mt7981-keenetic-kn-1012.dtb with-initrd | pad-to 64k
 endef
 TARGET_DEVICES += keenetic_kn-1012
+
 
