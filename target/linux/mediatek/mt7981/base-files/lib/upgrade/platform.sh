@@ -211,6 +211,7 @@ platform_do_upgrade() {
 	*honor,fur-602* |\
 	*konka,komi-a31* |\
 	routerich,ax3000 |\
+	keenetic,kn-1012 |\
 	*nokia,ea0326gmp* |\
 	*newland,nl-wr8103* |\
 	newland,nl-wr9103 |\
@@ -228,9 +229,6 @@ platform_do_upgrade() {
 	xiaomi,mi-router-ax3000t-an8855-stock|\
 	xiaomi,mi-router-wr30u-stock)
 		xiaomi_mt7981_nand_upgrade_tar "$1"
-		;;
-	keenetic,kn-1012)
-		CI_UBIPART=firmware xiaomi_mt7981_nand_upgrade_tar "$1"
 		;;	
 	*)
 		default_do_upgrade "$1"
@@ -274,6 +272,7 @@ platform_check_image() {
 	nradio,wt9103 |\
 	*snand* |\
 	*emmc* |\
+	keenetic,kn-1012 |\
 	routerich,ax3000)
 		# tar magic `ustar`
 		magic="$(dd if="$1" bs=1 skip=257 count=5 2>/dev/null)"
