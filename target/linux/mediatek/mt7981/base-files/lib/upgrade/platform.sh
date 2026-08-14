@@ -229,6 +229,9 @@ platform_do_upgrade() {
 	xiaomi,mi-router-wr30u-stock)
 		xiaomi_mt7981_nand_upgrade_tar "$1"
 		;;
+	keenetic,kn-1012)
+		CI_UBIPART=firmware xiaomi_mt7981_nand_upgrade_tar "$1"
+		;;	
 	*)
 		default_do_upgrade "$1"
 		;;
