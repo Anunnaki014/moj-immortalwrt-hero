@@ -21,12 +21,6 @@ define Device/Default
   IMAGE/sysupgrade.bin := append-kernel | pad-to 128k | append-rootfs | \
 	pad-rootfs | append-metadata
 endef
-define Build/keenetic-header
-	$(STAGING_DIR_HOST)/bin/keenetic-header v1 $(1) $@ $@.new
-	mv $@.new $@
-endef
-
-
 include $(SUBTARGET).mk
 
 define Image/Build
