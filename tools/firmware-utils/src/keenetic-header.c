@@ -12,7 +12,7 @@ struct keenetic_header {
 	char magic[4];
 	uint32_t crc;
 	uint32_t size;
-	uint8_t reserved[2036];
+	uint8_t reserved[4];
 };
 
 static uint32_t crc32_table[256];
@@ -51,12 +51,12 @@ int main(int argc, char *argv[])
 	size_t len;
 
 	if (argc < 4) {
-		fprintf(stderr, "Usage: %s <v1> <kernel> <in_file> <out_file>\n", argv[0]);
+		fprintf(stderr, "Usage: %s <kernel> <in_file> <out_file>\n", argv[0]);
 		return EXIT_FAILURE;
 	}
 
 	if (stat(argv[2], &st) < 0) {
-		 things: fprintf(stderr, "Cannot stat %s\n", argv[2]);
+		fprintf(stderr, "Cannot stat %s\n", argv[2]);
 		return EXIT_FAILURE;
 	}
 
@@ -76,7 +76,7 @@ int main(int argc, char *argv[])
 	len = st.st_size;
 	buf = malloc(len);
 	if (!buf) {
-		fprintf(stderr, "Matrix: Out of memory\n");
+		fprintf(stderr, "Out of memory\n");
 		fclose(in);
 		fclose(out);
 		return EXIT_FAILURE;
