@@ -41,6 +41,7 @@ define Host/Compile
 	$(call cc,hcsmakeimage bcmalgo)
 	$(call cc,imagetag imagetag_cmdline cyg_crc32)
 	$(call cc,jcgimage,-lz -Wall)
+	$(call cc,keenetic-header)
 	$(call cc,lxlfw)
 	$(call cc,lzma2eva,-lz)
 	$(call cc,makeamitbin)
