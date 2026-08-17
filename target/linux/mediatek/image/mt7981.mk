@@ -821,6 +821,7 @@ define Device/keenetic_kn-1012
   SUPPORTED_DEVICES := keenetic,kn-1012
   IMAGE_SIZE := 114688k
   DEVICE_PACKAGES := kmod-usb3 kmod-mt7981-firmware wpad-basic-wolfssl luci uhttpd uhttpd-mod-ubus
+  KERNEL := kernel-bin | lzma | fit lzma $$(KDIR)/image-mt7981-keenetic-kn-1012.dtb | keenetic-header
   IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
   KERNEL_INITRAMFS := kernel-bin | lzma | fit lzma $$(KDIR)/image-mt7981-keenetic-kn-1012.dtb with-initrd | pad-to 64k
 endef
