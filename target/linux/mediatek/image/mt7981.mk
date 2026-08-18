@@ -812,21 +812,24 @@ TARGET_DEVICES += routerich_ax3000
 
 
 define Device/keenetic_kn-1012
-  DEVICE_VENDOR := Keenetic
-  DEVICE_MODEL := Hero/Giga (KN-1012)
-  DEVICE_VARIANT := NAND
-  BOARD_NAME := keenetic,kn-1012
-  DEVICE_DTS := mt7981-keenetic-kn-1012
-  DEVICE_DTS_DIR := $(DTS_DIR)/mediatek
-  SUPPORTED_DEVICES := keenetic,kn-1012
-  IMAGE_SIZE := 114688k
-  DEVICE_PACKAGES := kmod-usb3 kmod-mt7981-firmware wpad-basic-wolfssl luci uhttpd uhttpd-mod-ubus
+	DEVICE_VENDOR := Keenetic
+	DEVICE_MODEL := Hero/Giga (KN-1012)
+	DEVICE_VARIANT := NAND
+	BOARD_NAME := keenetic,kn-1012
+	DEVICE_DTS := mt7981-keenetic-kn-1012
+	DEVICE_DTS_DIR := $(DTS_DIR)/mediatek
+	SUPPORTED_DEVICES := keenetic,kn-1012
+	IMAGE_SIZE := 114688k
+	DEVICE_PACKAGES := kmod-usb3 kmod-mt7981-firmware wpad-basic-wolfssl luci uhttpd uhttpd-mod-ubus
+	PAGESIZE := 2048
+	SUBPAGESIZE := 2048
+	BLOCKSIZE := 128k
 	KERNEL := kernel-bin | lzma | fit lzma $$(KDIR)/image-mt7981-keenetic-kn-1012.dtb
-	IMAGE/sysupgrade.bin := append-kernel | pad-to 131072 | append-ubi | append-metadata
-	IMAGE/sysupgrade.bin += | keenetic-header
+	IMAGE/sysupgrade.bin := append-kernel | pad-to 131072 | append-ubi | keenetic-header | append-metadata
 	KERNEL_INITRAMFS := kernel-bin | lzma | fit lzma $$(KDIR)/image-mt7981-keenetic-kn-1012.dtb with-initrd | pad-to 64k
 endef
 TARGET_DEVICES += keenetic_kn-1012
+
 
 
 
