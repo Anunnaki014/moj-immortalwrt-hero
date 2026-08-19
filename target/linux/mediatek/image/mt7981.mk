@@ -825,8 +825,7 @@ define Device/keenetic_kn-1012
 	SUBPAGESIZE := 2048
 	BLOCKSIZE := 128k
 	KERNEL := kernel-bin | lzma | fit lzma $$(KDIR)/image-mt7981-keenetic-kn-1012.dtb
-	IMAGE/sysupgrade.bin := append-kernel | pad-to 131072 | append-ubi | append-metadata
-	IMAGE/sysupgrade.bin += | keenetic-header
+	IMAGE/sysupgrade.bin := append-kernel | pad-to 131072 | append-ubi | keenetic-header | append-metadata
 	KERNEL_INITRAMFS := kernel-bin | lzma | fit lzma $$(KDIR)/image-mt7981-keenetic-kn-1012.dtb with-initrd | pad-to 64k
 endef
 TARGET_DEVICES += keenetic_kn-1012
