@@ -216,6 +216,7 @@ platform_do_upgrade() {
 	*newland,nl-wr8103* |\
 	newland,nl-wr9103 |\
 	*snand*)
+		[ "$board" = "keenetic,kn-1012" ] && [ "$(get_magic_long "$1")" != "75737461" ] && CI_KERNPART="kernel"
 		nand_do_upgrade "$1"
 		;;
 	cmcc,rax3000m-emmc |\
@@ -301,6 +302,9 @@ platform_pre_upgrade() {
 	local board=$(board_name)
 
 	case "$board" in
+	keenetic,kn-1012)
+		nand_remove_ubiblock
+		;;
 	xiaomi,mi-router-ax3000t-stock|\
 	xiaomi,mi-router-ax3000t-an8855-stock|\
 	xiaomi,mi-router-wr30u-stock)
