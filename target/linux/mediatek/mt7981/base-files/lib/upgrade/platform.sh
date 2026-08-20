@@ -243,7 +243,7 @@ platform_check_image() {
 	local magic="$(get_magic_long "$1")"
 
 	[ "$#" -gt 1 ] && return 1
-	[ "$board" = "keenetic,kn-1012" ] && [ "$magic" = "55424923" ] && return 0
+	[ "$board" = "keenetic,kn-1012" ] && [ "$magic" = "4b4e4431" ] && return 0
 
 	case "$board" in
 	*mt3000* |\
