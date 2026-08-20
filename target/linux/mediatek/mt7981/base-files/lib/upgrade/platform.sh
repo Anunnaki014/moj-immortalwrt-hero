@@ -216,7 +216,7 @@ platform_do_upgrade() {
 	*newland,nl-wr8103* |\
 	newland,nl-wr9103 |\
 	*snand*)
-		[ "$board" = "keenetic,kn-1012" ] && [ "$(get_magic_long "$1")" != "75737461" ] && CI_UBIPART="ubi"
+		[ "$board" = "keenetic,kn-1012" ] && [ $(get_magic_long "$1") != "75737461" ] && CI_KERNPART="kernel"
 		nand_do_upgrade "$1"
 		;;
 	cmcc,rax3000m-emmc |\
